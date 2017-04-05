@@ -1,0 +1,33 @@
+Jeep Command Development History
+*-*-*-*-*   G.Çetin    *-*-*-*-*
+
+********************************
+**  GAME DEVELOPMENT HISTORY  **
+********************************
+
+5 April, 2017 10:26
+
+After two weeks, I've coded approx. 4-5 short sessions and worked on the Jeep sprite for 20 minutes. Now I can see the Player sprite (which is a Jeep image), and the background music is working. Game mechanics is not done yet. (It's a platformer right now)
+
+I've not decided to upload onto GitHub yet. Should I upload and keep a copy there, yet? I think it would be better to have something resembling the Jeep a bit more, maybe the small bushes? and the first jump? maybe a cyclic track? Whatever, I uploaded it already, AS IS.
+
+I think I can keep this history file on GitHub, too.
+
++ added SPACE to Jump.
+
++ added Jeep.png (edited from a screenshot of an emulated game)
+
++ as of now, it is 2-second length game, try to get out of the scene!
+
+TODO: make the level longer, maybe in an infinite loop...
+
+
+______________________________
+29 . 03 . 2017 Wednesday 23:34
+I've used a tutorial code (MovingPlatform.py) and added a constant minimum x-velocity to the player.
+
+The level obstacles are not displayed at the moment. To be fixed.
+
+Bg music is there.
+
+
