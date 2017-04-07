@@ -1,9 +1,19 @@
-Jeep Command Development History
+﻿Jeep Command Development History
 *-*-*-*-*   G.Çetin    *-*-*-*-*
 
 ********************************
 **  GAME DEVELOPMENT HISTORY  **
 ********************************
+
+7 April, 2017 23:14
+After another session, I've learned how to place rectangular items on the level. Have designed a three block level, which teaches the basics of jump.
+
+Conclusion: the collision detection is rectangular, so it doesn't look that much realistic, as the tires are in the air until the bumper leaves the block. This might need to be improved, although not a show stopper.
+
+TODO: 
+[] firing mechanism
+[] a background with random clouds?
+[] longer level, how long can it be? 10000 = 10000px / 6 (px/frame) /60fps = 27.75 seconds
 
 5 April, 2017 10:26
 
@@ -21,7 +31,7 @@ I think I can keep this history file on GitHub, too.
 
 TODO: make the level longer, maybe in an infinite loop...
 
-
+[] araba ve karoser seçimi, (renk x model)
 ______________________________
 29 . 03 . 2017 Wednesday 23:34
 I've used a tutorial code (MovingPlatform.py) and added a constant minimum x-velocity to the player.

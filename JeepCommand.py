@@ -16,7 +16,7 @@ Red      = ( 255,   0,   0)
 Blue     = (   0,   0, 255)
 Gray     = ( 127, 127, 127)
 
-GameVersion = "v0.01"
+GameVersion = "v0.02"
 
 # set up Game Window constants
 CAPTION = "Jeep Command " + GameVersion
@@ -27,7 +27,7 @@ pg.init()
 pg.display.set_caption(CAPTION)
 windowSurface = pg.display.set_mode(SCREEN_SIZE,0,32)
 
-print("Jeep Command " + GameVersion +", loading...\n ENJOY!") # GAME Loading (supposedly)
+print("Jeep Command " + GameVersion +", loading...\n___ENJOY!___") # GAME Loading (supposedly)
 
 # draw a polygon on screen and wait for 2 seconds
 windowSurface.fill(Gray)
@@ -45,6 +45,10 @@ pg.mixer.init()
 #pg.mixer.music.load("bgmusic.mp3")
 pg.mixer.music.load("Jeep_Command.wav")
 pg.mixer.music.play(loops = -1)
+
+#Some more game Constants
+length_level = 10000
+
 
 class _Physics(object):
     """A simplified physics class. Psuedo-gravity is often good enough."""
@@ -91,7 +95,7 @@ class Player(_Physics, pg.sprite.Sprite):
         self.jump_power = -9.0
         self.jump_cut_magnitude = -3.0
         self.on_moving = False
-        self.collide_below = True # False idi, deneme
+        self.collide_below = False # False idi, deneme
 
     def check_keys(self, keys):
         """Find the player's self.x_vel based on currently held keys."""
@@ -179,7 +183,6 @@ class Player(_Physics, pg.sprite.Sprite):
         """Blit the player to the target surface."""
         surface.blit(self.image, self.rect)
 
-
 class Control(object):
     """Class for managing event loop and game states."""
     def __init__(self):
@@ -192,22 +195,26 @@ class Control(object):
         self.done = False
         self.player = Player((80,858), 4) #50,875 idi
         self.viewport = self.screen.get_rect()
-        self.level = pg.Surface((1000,1000)).convert() #2000,1000 idi
+        self.level = pg.Surface((length_level,1000)).convert() #2000,1000 idi
         self.level_rect = self.level.get_rect()
         # self.win_text,self.win_rect = self.make_text()
         self.obstacles = self.make_obstacles()
     def make_obstacles(self):
         """Adds some arbitrarily placed obstacles to a sprite.Group."""
-        walls = [Block(pg.Color("chocolate"), (0  ,980, 1000,  20)), #alt zemin
+        walls = [Block(pg.Color("chocolate"), (0  ,980, length_level,  20)), #alt zemin
                  Block(pg.Color("chocolate"), (0 , 0 ,  20 , 1000)), #solduvar
-                 Block(pg.Color("white"), (980, 0 ,  20 , 1000))
+                 Block(pg.Color("white"), (length_level-20, 0 ,  20 , 1000)) #sağduvar
                  ]
         static = [
                   Block(pg.Color("darkgreen"), (250,900,200,80)),
                   Block(pg.Color("darkgreen"), (450,800,200,80)),
                   Block(pg.Color("darkgreen"), (600,900,150,80)),
-                  #Block(pg.Color("darkgreen"), (600,880,200,100)),
-                  #Block(pg.Color("darkgreen"), (20,360,880,40)),
+                  Block(pg.Color("darkgreen"), (1400,900,200,80)),
+                  Block(pg.Color("darkgreen"), (2000,900,200,80)),
+                  Block(pg.Color("darkgreen"), (2600,900,200,80)),
+                  Block(pg.Color("darkgreen"), (4000,900,200,80)),
+                  Block(pg.Color("darkgreen"), (6000,900,200,80)),
+                  Block(pg.Color("darkgreen"), (9000,360,880,40)),
                   #Block(pg.Color("darkgreen"), (950,400,30,20)),
                   #Block(pg.Color("darkgreen"), (20,630,50,20)),
                   #Block(pg.Color("darkgreen"), (80,530,50,20)),
