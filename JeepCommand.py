@@ -42,7 +42,8 @@ pg.display.update()
 
 # Background Music
 pg.mixer.init()
-pg.mixer.music.load("bgmusic.mp3")
+#pg.mixer.music.load("bgmusic.mp3")
+pg.mixer.music.load("Jeep_Command.wav")
 pg.mixer.music.play(loops = -1)
 
 class _Physics(object):
@@ -87,8 +88,8 @@ class Player(_Physics, pg.sprite.Sprite):
         self.image = pg.image.load("Jeep.png").convert_alpha() # DENEME, işe yaradı ama uçuyor.
         self.rect = self.image.get_rect(topleft=location)
         self.speed = speed
-        self.jump_power = -12.0
-        self.jump_cut_magnitude = -6.0
+        self.jump_power = -9.0
+        self.jump_cut_magnitude = -3.0
         self.on_moving = False
         self.collide_below = True # False idi, deneme
 
@@ -99,11 +100,14 @@ class Player(_Physics, pg.sprite.Sprite):
             self.x_vel -= self.speed
             if self.x_vel <=self.x_vel_min:
                     self.x_vel = self.x_vel_min
-        if keys[pg.K_RIGHT] or keys[pg.K_d]:
+        elif keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.x_vel += self.speed
             if self.x_vel >=self.x_vel_max:
                     self.x_vel = self.x_vel_max
-
+        elif keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT]:
+            self.x_vel -= self.x_vel_min*2
+            #if self.x_vel <=-self.x_vel_max:
+            #        self.x_vel = -self.x_vel_min
     def get_position(self, obstacles):
         """Calculate the player's position this frame, including collisions."""
         if not self.fall:
@@ -186,7 +190,7 @@ class Control(object):
         self.fps = 60.0
         self.keys = pg.key.get_pressed()
         self.done = False
-        self.player = Player((50,400), 4) #50,875 idi
+        self.player = Player((80,858), 4) #50,875 idi
         self.viewport = self.screen.get_rect()
         self.level = pg.Surface((1000,1000)).convert() #2000,1000 idi
         self.level_rect = self.level.get_rect()
@@ -194,18 +198,23 @@ class Control(object):
         self.obstacles = self.make_obstacles()
     def make_obstacles(self):
         """Adds some arbitrarily placed obstacles to a sprite.Group."""
-        walls = [Block(pg.Color("chocolate"), (0,980,1000,20)),
-                 Block(pg.Color("chocolate"), (0,0,20, 600)),
-                 Block(pg.Color("chocolate"), (980,0,20,600))]
-        static = [Block(pg.Color("darkgreen"), (250,780,200,100)),
+        walls = [Block(pg.Color("chocolate"), (0  ,980, 1000,  20)), #alt zemin
+                 Block(pg.Color("chocolate"), (0 , 0 ,  20 , 1000)), #solduvar
+                 Block(pg.Color("white"), (980, 0 ,  20 , 1000))
+                 ]
+        static = [
+                  Block(pg.Color("darkgreen"), (250,900,200,80)),
+                  Block(pg.Color("darkgreen"), (450,800,200,80)),
+                  Block(pg.Color("darkgreen"), (600,900,150,80)),
                   #Block(pg.Color("darkgreen"), (600,880,200,100)),
-                  Block(pg.Color("darkgreen"), (20,360,880,40)),
-                  Block(pg.Color("darkgreen"), (950,400,30,20)),
+                  #Block(pg.Color("darkgreen"), (20,360,880,40)),
+                  #Block(pg.Color("darkgreen"), (950,400,30,20)),
                   #Block(pg.Color("darkgreen"), (20,630,50,20)),
                   #Block(pg.Color("darkgreen"), (80,530,50,20)),
                   #Block(pg.Color("darkgreen"), (130,470,200,215)),
-                  Block(pg.Color("darkgreen"), (20,760,30,20)),
-                  Block(pg.Color("darkgreen"), (400,740,30,40))]
+                  #Block(pg.Color("darkgreen"), (20,760,30,20)),
+                  #Block(pg.Color("darkgreen"), (400,740,30,40))
+                  ]
         return pg.sprite.Group(walls, static)
 
     def update_viewport(self):
@@ -248,6 +257,7 @@ class Control(object):
                     if event.type == pg.KEYDOWN:
                         if event.key == pg.K_SPACE:
                             self.player.jump(self.obstacles)
+                            boing_sound=pg.mixer.Sound("chimes.wav").play()
                     if event.type == MOUSEBUTTONDOWN:
                         #pg.mixer.music.set_volume(0.8*pg.mixer.music.get_volume())
                         boing_sound=pg.mixer.Sound("chimes.wav").play()
