@@ -16,7 +16,7 @@ Red      = ( 255,   0,   0)
 Blue     = (   0,   0, 255)
 Gray     = ( 127, 127, 127)
 
-GameVersion = "v0.02"
+GameVersion = "v0.03"
 
 # set up Game Window constants
 CAPTION = "Jeep Command " + GameVersion
@@ -58,8 +58,8 @@ class _Physics(object):
         self.y_vel = 0
         self.grav = 0.4
         self.fall = False
-        self.x_vel_min=2
-        self.x_vel_max=4
+        self.x_vel_min=0
+        self.x_vel_max=2
         
     def physics_update(self):
         """If the player is falling, add gravity to the current y velocity."""
@@ -120,13 +120,22 @@ class Player(_Physics, pg.sprite.Sprite):
             self.fall = self.check_collisions((0,self.y_vel), 1, obstacles)
         if self.x_vel:
             self.check_collisions((self.x_vel,0), 0, obstacles)
-
+#            print (self.check_collisions((self.x_vel,0), 0, obstacles), "\n")
+            if not self.check_collisions((self.x_vel,0), 0, obstacles):
+                print(" You lose! Try Again! \n Thanks for playing Jeep Command!") # GAME OVER.
+                pg.mixer.music.stop() # stop playing sounds/and bg music! DOESNT WORK!
+                time.sleep(1)
+                boing_sound=pg.mixer.Sound("chimes.wav").play()
+                time.sleep(1)
+                pg.quit()
+                sys.exit()
     def check_falling(self, obstacles):
         """If player is not contacting the ground, enter fall state."""
+        #collide = pg.sprite.spritecollideany(self, obstacles)
         if not self.collide_below:
             self.fall = True   # TRUE idi, 29 mart 23:06'da değiştirdim. Denemek için.
             self.on_moving = False
-
+        
     def check_collisions(self, offset, index, obstacles):
         """
         This function checks if a collision would occur after moving offset
@@ -150,9 +159,9 @@ class Player(_Physics, pg.sprite.Sprite):
 
     def check_below(self, obstacles):
         """Check to see if the player is contacting the ground."""
-        self.rect.move_ip((0,1))  # move_ip = Move in Place
+        self.rect.move_ip((+60,1))  # move_ip = Move in Place
         collide = pg.sprite.spritecollide(self, obstacles, False)
-        self.rect.move_ip((0,-1))
+        self.rect.move_ip((-60,-1))
         return collide
 
     def jump(self, obstacles):
@@ -257,7 +266,7 @@ class Control(object):
             for event in pg.event.get():
                 if event.type == QUIT:
                     self.done = True
-                    print(" Game over... \n Thanks for playing Jeep Command!") # GAME OVER.
+                    print(" You quit! Come back... \n Thanks for playing Jeep Command!") # GAME OVER.
                     pg.quit()
                     sys.exit()
                 else:
