@@ -42,13 +42,11 @@ pg.display.update()
 
 # Background Music
 pg.mixer.init()
-#pg.mixer.music.load("bgmusic.mp3")
 pg.mixer.music.load("Jeep_Command.wav")
 pg.mixer.music.play(loops = -1)
 
 #Some more game Constants
 length_level = 10000
-
 
 class _Physics(object):
     """A simplified physics class. Psuedo-gravity is often good enough."""
@@ -56,10 +54,10 @@ class _Physics(object):
         """You can experiment with different gravity here."""
         self.x_vel = 2
         self.y_vel = 0
-        self.grav = 0.4
+        self.grav = 0.3
         self.fall = False
-        self.x_vel_min=0
-        self.x_vel_max=2
+        self.x_vel_min=1
+        self.x_vel_max=4
         
     def physics_update(self):
         """If the player is falling, add gravity to the current y velocity."""
@@ -77,6 +75,7 @@ class Block(pg.sprite.Sprite):
         self.image = pg.Surface(self.rect.size).convert()
         self.image.fill(color)
         self.type = "normal"
+        
 
 class Player(_Physics, pg.sprite.Sprite):
     """Class representing our player."""
@@ -88,14 +87,13 @@ class Player(_Physics, pg.sprite.Sprite):
         _Physics.__init__(self)
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((30,55)).convert()
-        #self.image.fill(pg.Color("red"))
-        self.image = pg.image.load("Jeep.png").convert_alpha() # DENEME, işe yaradı ama uçuyor.
+        self.image = pg.image.load("Jeep.png").convert_alpha()
         self.rect = self.image.get_rect(topleft=location)
         self.speed = speed
         self.jump_power = -9.0
-        self.jump_cut_magnitude = -3.0
+        self.jump_cut_magnitude = -6.0
         self.on_moving = False
-        self.collide_below = False # False idi, deneme
+        self.collide_below = False
 
     def check_keys(self, keys):
         """Find the player's self.x_vel based on currently held keys."""
@@ -105,13 +103,12 @@ class Player(_Physics, pg.sprite.Sprite):
             if self.x_vel <=self.x_vel_min:
                     self.x_vel = self.x_vel_min
         elif keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.x_vel += self.speed
+            self.x_vel += 1
             if self.x_vel >=self.x_vel_max:
                     self.x_vel = self.x_vel_max
         elif keys[pg.K_LSHIFT] or keys[pg.K_RSHIFT]:
             self.x_vel -= self.x_vel_min*2
-            #if self.x_vel <=-self.x_vel_max:
-            #        self.x_vel = -self.x_vel_min
+
     def get_position(self, obstacles):
         """Calculate the player's position this frame, including collisions."""
         if not self.fall:
@@ -120,7 +117,6 @@ class Player(_Physics, pg.sprite.Sprite):
             self.fall = self.check_collisions((0,self.y_vel), 1, obstacles)
         if self.x_vel:
             self.check_collisions((self.x_vel,0), 0, obstacles)
-#            print (self.check_collisions((self.x_vel,0), 0, obstacles), "\n")
             if not self.check_collisions((self.x_vel,0), 0, obstacles):
                 print(" You lose! Try Again! \n Thanks for playing Jeep Command!") # GAME OVER.
                 pg.mixer.music.stop() # stop playing sounds/and bg music! DOESNT WORK!
@@ -131,9 +127,8 @@ class Player(_Physics, pg.sprite.Sprite):
                 sys.exit()
     def check_falling(self, obstacles):
         """If player is not contacting the ground, enter fall state."""
-        #collide = pg.sprite.spritecollideany(self, obstacles)
         if not self.collide_below:
-            self.fall = True   # TRUE idi, 29 mart 23:06'da değiştirdim. Denemek için.
+            self.fall = True
             self.on_moving = False
         
     def check_collisions(self, offset, index, obstacles):
@@ -180,7 +175,6 @@ class Player(_Physics, pg.sprite.Sprite):
     def pre_update(self, obstacles):
         """Ran before platforms are updated."""
         self.collide_below = self.check_below(obstacles)
-        #self.check_moving(obstacles)
 
     def update(self, obstacles, keys):
         """Everything we need to stay updated; ran after platforms update."""
@@ -202,12 +196,14 @@ class Control(object):
         self.fps = 60.0
         self.keys = pg.key.get_pressed()
         self.done = False
-        self.player = Player((80,858), 4) #50,875 idi
+        self.player = Player((50,858), 4) #50,875 idi
         self.viewport = self.screen.get_rect()
         self.level = pg.Surface((length_level,1000)).convert() #2000,1000 idi
         self.level_rect = self.level.get_rect()
-        # self.win_text,self.win_rect = self.make_text()
         self.obstacles = self.make_obstacles()
+        self.color=128
+        self.score = 0
+                
     def make_obstacles(self):
         """Adds some arbitrarily placed obstacles to a sprite.Group."""
         walls = [Block(pg.Color("chocolate"), (0  ,980, length_level,  20)), #alt zemin
@@ -215,21 +211,15 @@ class Control(object):
                  Block(pg.Color("white"), (length_level-20, 0 ,  20 , 1000)) #sağduvar
                  ]
         static = [
-                  Block(pg.Color("darkgreen"), (250,900,200,80)),
-                  Block(pg.Color("darkgreen"), (450,800,200,80)),
-                  Block(pg.Color("darkgreen"), (600,900,150,80)),
+                  Block(pg.Color("darkgreen"), (450,900,40,80)),
+                  Block(pg.Color("darkgreen"), (650,800,40,80)),
+                  Block(pg.Color("darkgreen"), (800,900,40,80)),
                   Block(pg.Color("darkgreen"), (1400,900,200,80)),
                   Block(pg.Color("darkgreen"), (2000,900,200,80)),
                   Block(pg.Color("darkgreen"), (2600,900,200,80)),
                   Block(pg.Color("darkgreen"), (4000,900,200,80)),
                   Block(pg.Color("darkgreen"), (6000,900,200,80)),
                   Block(pg.Color("darkgreen"), (9000,360,880,40)),
-                  #Block(pg.Color("darkgreen"), (950,400,30,20)),
-                  #Block(pg.Color("darkgreen"), (20,630,50,20)),
-                  #Block(pg.Color("darkgreen"), (80,530,50,20)),
-                  #Block(pg.Color("darkgreen"), (130,470,200,215)),
-                  #Block(pg.Color("darkgreen"), (20,760,30,20)),
-                  #Block(pg.Color("darkgreen"), (400,740,30,40))
                   ]
         return pg.sprite.Group(walls, static)
 
@@ -248,15 +238,18 @@ class Control(object):
         self.obstacles.update(self.player, self.obstacles)
         self.player.update(self.obstacles, self.keys)
         self.update_viewport()
-
+        print ("Score: " , self.score)
+        self.score +=1
+        
     def draw(self):
         """
         Draw all necessary objects to the level surface, and then draw
         the viewport section of the level to the display surface.
         """
-        self.level.fill(pg.Color("lightblue"))
+        self.color = (self.color +1)%255
+        dynamicColor = (self.color,128,128)
+        self.level.fill(dynamicColor)
         self.obstacles.draw(self.level)
-        #self.level.blit(self.win_text, self.win_rect)
         self.player.draw(self.level)
         self.screen.blit(self.level, (0,0), self.viewport)
 
@@ -275,26 +268,12 @@ class Control(object):
                             self.player.jump(self.obstacles)
                             boing_sound=pg.mixer.Sound("chimes.wav").play()
                     if event.type == MOUSEBUTTONDOWN:
-                        #pg.mixer.music.set_volume(0.8*pg.mixer.music.get_volume())
                         boing_sound=pg.mixer.Sound("chimes.wav").play()
-                        #pg.mixer.music.set_volume(1.25*pg.mixer.music.get_volume())
-                        #pg.mixer.fadeout(3) # stop playing sounds/and bg music
-                        #print ("stopped playing, mouse clicked?")
-                        #print(pg.mixer.music.get_volume())
-            #self.event_loop()
+
             self.update()
             self.draw()
             pg.display.update()
             self.clock.tick(self.fps)
- #          self.display_fps()
- #          timePrevious = time.process_time()
-            #i=math.fmod(i+3,255)
-            dynamicColor = (128,128,128)
-            windowSurface.fill(dynamicColor)      
- #           pg.display.update()
- #           dTime = time.process_time()-timePrevious
- #           if dTime < 0.04:
- #               time.sleep(0.04-dTime)
         
 if __name__ == "__main__":
     os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -303,6 +282,3 @@ if __name__ == "__main__":
     pg.display.set_mode(SCREEN_SIZE)
     run_it = Control()
     run_it.main_loop()
-   # pg.quit()
-   # sys.exit()
-
