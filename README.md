@@ -1,4 +1,4 @@
-# THIS GAME IS IN DEVELOPMENT STAGE
+## THIS GAME IS IN DEVELOPMENT STAGE
 
 # Jeep Command
 This game aims to resemble the "Jeep Command" of the Commodore 64. 
