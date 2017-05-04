@@ -23,3 +23,5 @@ I've converted from SID to WAV using SID2WAV of http://www.vgmpf.com/Wiki/index.
 Happy coding everyone!
 
 And please say Hi if you visited this page.
+
+Note: There may be several months of inactivity in 2017, due to a new project that I've joined. Enjoy the codes and don't hesitate to improvize on them, and let me know!
