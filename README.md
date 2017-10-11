@@ -25,3 +25,8 @@ Happy coding everyone!
 And please say Hi if you visited this page.
 
 Note: There may be several months of inactivity in 2017, due to a new project that I've joined. Enjoy the codes and don't hesitate to improvize on them, and let me know!
+
+
+Thoughts for the future:
+1) Read levels from file: some parameters include: length of level, number of obstacles, definition of obstacles (location, shape, size, color)
+2) Show current score, Record score, and number of lives left (as hearts?).
