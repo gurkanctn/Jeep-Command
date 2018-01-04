@@ -4,6 +4,13 @@
 ********************************
 **  GAME DEVELOPMENT HISTORY  **
 ********************************
+January, 4th 2018 22:54
+Uploaded v0.04 which includes Game Score text.
+
+TODO:
+[] collision detection should be pixel-based
+[] player can drive on Green blocks, but NOT ON RED blocks. (define red blocks)
+[] change Player sprite with a new one.
 
 7 April, 2017 23:14
 After another session, I've learned how to place rectangular items on the level. Have designed a three block level, which teaches the basics of jump.
@@ -12,7 +19,7 @@ Conclusion: the collision detection is rectangular, so it doesn't look that much
 
 TODO: 
 [] firing mechanism
-[] a background with random clouds?
+[X] a background with random clouds? done
 [] longer level, how long can it be? 10000 = 10000px / 6 (px/frame) /60fps = 27.75 seconds
 
 5 April, 2017 10:26
