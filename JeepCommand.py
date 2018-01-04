@@ -5,6 +5,7 @@
 import os
 import pygame as pg
 from pygame.locals import *
+from random import *
 import sys
 import time
 
@@ -16,7 +17,7 @@ Red      = ( 255,   0,   0)
 Blue     = (   0,   0, 255)
 Gray     = ( 127, 127, 127)
 
-GameVersion = "v0.03"
+GameVersion = "v0.04"
 
 # set up Game Window constants
 CAPTION = "Jeep Command " + GameVersion
@@ -29,7 +30,7 @@ windowSurface = pg.display.set_mode(SCREEN_SIZE,0,32)
 
 print("Jeep Command " + GameVersion +", loading...\n___ENJOY!___") # GAME Loading (supposedly)
 
-# draw a polygon on screen and wait for 2 seconds
+# draw a polygon on screen and ## wait for 2 seconds
 windowSurface.fill(Gray)
 pg.draw.polygon(windowSurface, Black, ((200,38),(342,250),(200,402),(58,250)))
 pg.draw.polygon(windowSurface, White, ((200,40),(200,250),(60,250)))
@@ -38,7 +39,7 @@ pg.draw.polygon(windowSurface, Green, ((200,250),(200,400),(60,250)))
 pg.draw.polygon(windowSurface, Red,   ((200,250),(200,400),(340,250)))
 
 pg.display.update()
-#time.sleep(2)
+time.sleep(2)
 
 # Background Music
 pg.mixer.init()
@@ -48,16 +49,30 @@ pg.mixer.music.play(loops = -1)
 #Some more game Constants
 length_level = 10000
 
+def text_to_screen(self, text, x, y, size = 50,
+            color = (200, 000, 000), font_type = 'myfont.ttf'):
+    try:
+        text = str(text)
+        #text = str('123456')
+        #print (text)
+        font = pg.font.Font(font_type, size)
+        text2 = font.render(text, True, color)
+        self.screen.blit(text2, (x, y))
+
+    except Exception as e:
+        print ('Font Error, saw it coming')
+        raise e
+
 class _Physics(object):
     """A simplified physics class. Psuedo-gravity is often good enough."""
     def __init__(self):
         """You can experiment with different gravity here."""
-        self.x_vel = 2
+        self.x_vel = 0
         self.y_vel = 0
         self.grav = 0.3
         self.fall = False
         self.x_vel_min=1
-        self.x_vel_max=4
+        self.x_vel_max=+3
         
     def physics_update(self):
         """If the player is falling, add gravity to the current y velocity."""
@@ -66,6 +81,28 @@ class _Physics(object):
         else:
             self.y_vel = 0
 
+# todo: clouds class'ını düzgün biçimde ekle..
+
+class Clouds(pg.sprite.Sprite):
+    """A class to include and animate clouds"""
+    def __init__(self, color, rect):
+        """initialize the cloud"""
+        pg.sprite.Sprite.__init__(self)
+        self.x = random()*legth_level
+        self.x_vel = random()*5
+        self.rect = pg.Rect(rect)
+        self.image = pg.Surface(self.rect.size).convert()
+        self.image.fill(color)
+        self.type = "normal"
+        self.mask=pg.mask.from_surface(self.image)
+
+    def clouds_update(self):
+        if self.x >= 0:
+            self.x = self.x - self.x_vel
+            if self.x < 0:
+                # KILL THIS CLOUD AND GENERATE NEW ONE
+                display("cloud dead")
+                
 class Block(pg.sprite.Sprite):
     """A class representing solid obstacles."""
     def __init__(self, color, rect):
@@ -75,7 +112,7 @@ class Block(pg.sprite.Sprite):
         self.image = pg.Surface(self.rect.size).convert()
         self.image.fill(color)
         self.type = "normal"
-        
+        self.mask=pg.mask.from_surface(self.image)
 
 class Player(_Physics, pg.sprite.Sprite):
     """Class representing our player."""
@@ -89,6 +126,7 @@ class Player(_Physics, pg.sprite.Sprite):
         self.image = pg.Surface((30,55)).convert()
         self.image = pg.image.load("Jeep.png").convert_alpha()
         self.rect = self.image.get_rect(topleft=location)
+        self.mask=pg.mask.from_surface(self.image)
         self.speed = speed
         self.jump_power = -9.0
         self.jump_cut_magnitude = -6.0
@@ -154,10 +192,14 @@ class Player(_Physics, pg.sprite.Sprite):
 
     def check_below(self, obstacles):
         """Check to see if the player is contacting the ground."""
-        self.rect.move_ip((+60,1))  # move_ip = Move in Place
+        self.rect.move_ip((0,1))  # move_ip = Move in Place
         collide = pg.sprite.spritecollide(self, obstacles, False)
-        self.rect.move_ip((-60,-1))
-        return collide
+        coll=False
+        if collide:
+            coll = pg.sprite.spritecollide(self, obstacles, False, pg.sprite.collide_mask)
+        self.rect.move_ip((0,-1))
+        #print (coll)
+        return not coll
 
     def jump(self, obstacles):
         """Called when the user presses the jump button."""
@@ -181,7 +223,7 @@ class Player(_Physics, pg.sprite.Sprite):
         self.check_keys(keys)
         self.get_position(obstacles)
         self.physics_update()
-
+        
     def draw(self, surface):
         """Blit the player to the target surface."""
         surface.blit(self.image, self.rect)
@@ -203,7 +245,15 @@ class Control(object):
         self.obstacles = self.make_obstacles()
         self.color=128
         self.score = 0
-                
+        #self.clouds = self.make_clouds()
+
+    def make_clouds(self):
+        cloudsList = [Block(pg.Color("chocolate"), (0  ,980, length_level,  20)), #alt zemin
+                 Block(pg.Color("chocolate"), (0 , 0 ,  20 , 1000)), #solduvar
+                 Block(pg.Color("white"), (length_level-20, 0 ,  20 , 1000)) #sağduvar
+                 ]
+        return pg.sprite.Group(cloudsList)
+    
     def make_obstacles(self):
         """Adds some arbitrarily placed obstacles to a sprite.Group."""
         walls = [Block(pg.Color("chocolate"), (0  ,980, length_level,  20)), #alt zemin
@@ -231,14 +281,17 @@ class Control(object):
         self.viewport.center = self.player.rect.center
         self.viewport.clamp_ip(self.level_rect)
 
+
     def update(self):
         """Update the player, obstacles, and current viewport."""
         self.keys = pg.key.get_pressed()
         self.player.pre_update(self.obstacles)
         self.obstacles.update(self.player, self.obstacles)
         self.player.update(self.obstacles, self.keys)
+        #self.cloud.update(self.obstacles, self.keys) #update clouds
         self.update_viewport()
-        print ("Score: " , self.score)
+        
+        #print ("Score: " , self.score)
         self.score +=1
         
     def draw(self):
@@ -251,7 +304,9 @@ class Control(object):
         self.level.fill(dynamicColor)
         self.obstacles.draw(self.level)
         self.player.draw(self.level)
+        #self.cloud.draw(self.level)  # draw clouds
         self.screen.blit(self.level, (0,0), self.viewport)
+        text_to_screen(self, 'Score: {0}'.format(self.score), 550, 10)
 
     def main_loop(self):
         """As simple as it gets."""
