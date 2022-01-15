@@ -1,4 +1,6 @@
-## THIS GAME IS IN DEVELOPMENT STAGE
+## THIS GAME IS ONLY A PROTOTYPE
+
+See the following video for a preview: https://youtu.be/jHGZiCgM6dc
 
 # Jeep Command
 This game aims to resemble the "Jeep Command" of the Commodore 64. 
