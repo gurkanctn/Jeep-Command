@@ -1,6 +1,7 @@
 ## THIS GAME IS A PROTOTYPE OF THE THEN-FAMOUS "Jeep Command" ON Commodore 64
 
 See the following video for a preview: https://youtu.be/jHGZiCgM6dc
+
 And this is the original game video: https://www.youtube.com/watch?v=OhdjJTSCFvc
 
 # Jeep Command
