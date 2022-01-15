@@ -1,4 +1,4 @@
-## THIS GAME IS ONLY A PROTOTYPE
+## THIS GAME IS A PROTOTYPE OF THE THEN-FAMOUS "Jeep Command" ON Commodore 64
 
 See the following video for a preview: https://youtu.be/jHGZiCgM6dc
 
